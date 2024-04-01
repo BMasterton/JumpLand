@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
 
         // determine if player is grounded
         isGrounded = Physics2D.OverlapCircle(groundCheckPoint.position, groundCheckRadius, groundLayerMask) && rbody.velocity.y < 0.01;
+        
         anim.SetBool("isGrounded", isGrounded); // notify animator
 
         // reset jumps if grounded
@@ -97,5 +98,16 @@ public class PlayerController : MonoBehaviour
         // flip the direction the player is facing
         facingRight = !facingRight;
         transform.Rotate(Vector3.up, 180);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Platform" || collision.gameObject.tag == "OneWayPlatform")
+        {
+            isGrounded = true;
+            anim.SetBool("isGrounded", true); // not triggering grounded for some reason even though the anim in being set 
+            jumpsAvailable = jumpMax;
+           
+        }
     }
 }

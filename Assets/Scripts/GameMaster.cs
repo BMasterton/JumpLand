@@ -1,0 +1,53 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GameMaster : MonoBehaviour
+{
+    [SerializeField] GameObject platform;
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+
+        if (collision.gameObject.tag == "Player")
+        {
+            StartCoroutine(deactivate());
+        }
+    }
+
+    IEnumerator activate()
+    {
+
+
+        Transform position = platform.transform;
+        yield return new WaitForSeconds(2);
+        platform.SetActive(true);
+        //_ = Instantiate(platform) as GameObject;
+        //platform.transform.position = position.position;
+
+        Debug.Log("Exited Deactivate");
+    }
+
+    IEnumerator deactivate()
+    {
+
+        Transform position = platform.transform;
+        Debug.Log("Entered deactivate");
+        yield return new WaitForSeconds(2);//wait x amount of seconds
+        platform.SetActive(false);
+        //Destroy(platform);
+
+        StartCoroutine(activate());
+    }
+}
