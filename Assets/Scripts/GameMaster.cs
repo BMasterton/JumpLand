@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameMaster : MonoBehaviour
 {
     [SerializeField] GameObject platform;
+  
     // Start is called before the first frame update
     void Start()
     {
@@ -14,7 +15,7 @@ public class GameMaster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+      
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

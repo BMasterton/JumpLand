@@ -8,6 +8,9 @@ TagManager:
   - FloatingPlat
   - Platform
   - OneWayPlatform
+  - Bullet
+  - Enemy
+  - respawn
   layers:
   - Default
   - TransparentFX

@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rbody;
     [SerializeField] Animator anim;
+    [SerializeField] GameObject bullet;
+    [SerializeField] Transform bulletSpawnPt;
+    [SerializeField] Transform respawnPt;
 
     private float horizInput;           // store horizontal input for used in FixedUpdate()
     private float moveSpeed = 450.0f;   // 4.5 * 100 newtons
@@ -23,6 +26,9 @@ public class PlayerController : MonoBehaviour
     private int jumpsAvailable = 0;     // current jumps available to player
 
     private bool facingRight = true;    // true if facing right
+
+    private int maxHealth = 5;
+    private int currentHealth = 5;
 
     private void Start()
     {
@@ -58,6 +64,11 @@ public class PlayerController : MonoBehaviour
             jumpsAvailable = jumpMax;
         }
 
+        if (Input.GetButtonDown("Fire1") )
+        {
+            Fire();
+        }
+
         // if jump is triggered & available - go for it
         if (Input.GetButtonDown("Jump") && jumpsAvailable > 0)
         {
@@ -69,6 +80,26 @@ public class PlayerController : MonoBehaviour
             (!facingRight && horizInput > 0.01))
         {
             Flip();
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.gameObject.tag == "respawn" )
+        { 
+        respawnPt = collision.transform;
+        }
+            
+        if (collision.gameObject.tag == "Bounds" && currentHealth != 0)
+        {
+            currentHealth--;
+            transform.position = respawnPt.position;
+        }
+        else if(collision.gameObject.tag == "Bounds" && currentHealth == 0)
+        {
+            // end game screen with restart and try again.
+            Application.Quit();
         }
     }
 
@@ -90,7 +121,13 @@ public class PlayerController : MonoBehaviour
         // tell the player to jump
         rbody.velocity = new Vector2(rbody.velocity.x, initialJumpVelocity);
         jumpsAvailable--;
-        anim.SetTrigger("jump");    // notify animator
+        if(jumpsAvailable == 1) { 
+            anim.SetTrigger("jump");    // notify animator
+        }else if (jumpsAvailable == 0)
+        {
+            anim.SetTrigger("doubleJump");
+        }
+       
     }
 
     void Flip()
@@ -98,6 +135,27 @@ public class PlayerController : MonoBehaviour
         // flip the direction the player is facing
         facingRight = !facingRight;
         transform.Rotate(Vector3.up, 180);
+    }
+
+    IEnumerator destoryBall(GameObject go)
+    {
+        yield return new WaitForSeconds(1);
+        Destroy(go);
+    }
+
+    void Fire()
+    {
+            GameObject go = Instantiate(bullet, bulletSpawnPt.position, bullet.transform.rotation);
+        if (facingRight)
+        {
+            go.GetComponent<Rigidbody2D>().AddForce(Vector2.right * 200 * 5);
+        }
+        else
+        {
+            go.GetComponent<Rigidbody2D>().AddForce(Vector2.left * 200 * 5);
+        }
+           
+        destoryBall(go);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
