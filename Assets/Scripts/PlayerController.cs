@@ -85,7 +85,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
+        if (collision.gameObject.tag == "ToLevelTwo")
+        {
+            //Change scene
+            //reset spawn point
+            //load in new things 
+        }
         if (collision.gameObject.tag == "respawn" )
         { 
         respawnPt = collision.transform;
@@ -101,6 +106,8 @@ public class PlayerController : MonoBehaviour
             // end game screen with restart and try again.
             Application.Quit();
         }
+       
+
     }
 
     private void OnDrawGizmos()
@@ -165,7 +172,12 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
             anim.SetBool("isGrounded", true); // not triggering grounded for some reason even though the anim in being set 
             jumpsAvailable = jumpMax;
-           
+
+        }
+        else if (collision.gameObject.tag == "Enemy" && currentHealth != 0)
+        {
+            currentHealth--;
+            anim.SetBool("isHurt", true);
         }
     }
 }

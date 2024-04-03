@@ -11,6 +11,7 @@ TagManager:
   - Bullet
   - Enemy
   - respawn
+  - ToLevelTwo
   layers:
   - Default
   - TransparentFX
