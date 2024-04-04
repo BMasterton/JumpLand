@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject bullet;
     [SerializeField] Transform bulletSpawnPt;
     [SerializeField] Transform respawnPt;
+    [SerializeField] GameManager gameController;
 
     private float horizInput;           // store horizontal input for used in FixedUpdate()
     private float moveSpeed = 450.0f;   // 4.5 * 100 newtons
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
     private int maxHealth = 5;
     private int currentHealth = 5;
+    private bool isHurt = false;
 
     private void Start()
     {
@@ -64,6 +66,14 @@ public class PlayerController : MonoBehaviour
             jumpsAvailable = jumpMax;
         }
 
+        //how in the name of god do i transition out of being hurt if i go into it on colission
+        if (isHurt)
+        {
+            isHurt = false;
+            anim.SetBool("isHurt", false);
+
+        }
+
         if (Input.GetButtonDown("Fire1") )
         {
             Fire();
@@ -87,9 +97,9 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "ToLevelTwo")
         {
-            //Change scene
-            //reset spawn point
-            //load in new things 
+
+            gameController.ChangeToLevelTwo();
+          
         }
         if (collision.gameObject.tag == "respawn" )
         { 
@@ -177,6 +187,7 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.tag == "Enemy" && currentHealth != 0)
         {
             currentHealth--;
+            isHurt = true;
             anim.SetBool("isHurt", true);
         }
     }

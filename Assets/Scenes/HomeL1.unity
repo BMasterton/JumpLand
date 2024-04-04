@@ -23435,7 +23435,7 @@ GameObject:
   - component: {fileID: 923851385}
   - component: {fileID: 923851387}
   m_Layer: 0
-  m_Name: GameMaster
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23454,6 +23454,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   platform: {fileID: 0}
+  player: {fileID: 0}
 --- !u!4 &923851386
 Transform:
   m_ObjectHideFlags: 0
@@ -24443,6 +24444,7 @@ MonoBehaviour:
   bullet: {fileID: 8774812374990754819, guid: 841197b3eea77894eab7fddfbcba6986, type: 3}
   bulletSpawnPt: {fileID: 1300527459}
   respawnPt: {fileID: 1058168523}
+  gameController: {fileID: 0}
   groundCheckPoint: {fileID: 669133187}
   groundLayerMask:
     serializedVersion: 2
