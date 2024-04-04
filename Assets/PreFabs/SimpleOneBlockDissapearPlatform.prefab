@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1276919948778896538}
   - component: {fileID: 3645826427410390681}
   - component: {fileID: 7734194913606674199}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SimpleOneBlockDissapearPlatform
   m_TagString: Platform
   m_Icon: {fileID: 0}

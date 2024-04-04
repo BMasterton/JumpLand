@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1902454006826503816}
   - component: {fileID: 5642031261881626523}
   - component: {fileID: 1490303493843537650}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MovingPlatform
   m_TagString: Platform
   m_Icon: {fileID: 0}
@@ -100,8 +100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   setPaths:
-  - {x: 14.08, y: -2.37}
-  - {x: 20, y: -2.37}
+  - {x: 0, y: 0}
+  - {x: -5, y: 0}
   currentPathIndex: 0
   speed: 1
 --- !u!61 &5642031261881626523

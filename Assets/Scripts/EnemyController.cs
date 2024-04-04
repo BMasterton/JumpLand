@@ -25,10 +25,10 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Bullet")
         {
-            hit = true;
+           
             health--;
-            anim.SetBool("hit", hit);  //not sure how to get the animation to work correctly and go back to idle 
-            if( health == 0)
+            anim.SetTrigger("ouch");  //not sure how to get the animation to work correctly and go back to idle 
+            if ( health == 0)
             {
                 Destroy(gameObject);
             }

@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour
 
     private int maxHealth = 5;
     private int currentHealth = 5;
-    private bool isHurt = false;
 
     private void Start()
     {
@@ -67,12 +66,12 @@ public class PlayerController : MonoBehaviour
         }
 
         //how in the name of god do i transition out of being hurt if i go into it on colission
-        if (isHurt)
-        {
-            isHurt = false;
-            anim.SetBool("isHurt", false);
+        //if (isHurt)
+        //{
+        //    isHurt = false;
+        //    anim.SetBool("isHurt", false);
 
-        }
+        //}
 
         if (Input.GetButtonDown("Fire1") )
         {
@@ -187,8 +186,7 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.tag == "Enemy" && currentHealth != 0)
         {
             currentHealth--;
-            isHurt = true;
-            anim.SetBool("isHurt", true);
+            anim.SetTrigger("ouch");
         }
     }
 }
