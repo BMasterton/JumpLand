@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TimedPlatformSequenceManager : MonoBehaviour
 {
+    GameObject[] timedPlatforms;
     // Start is called before the first frame update
     void Start()
     {
