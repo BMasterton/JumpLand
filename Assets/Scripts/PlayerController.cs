@@ -29,10 +29,12 @@ public class PlayerController : MonoBehaviour
     private bool facingRight = true;    // true if facing right
 
     private int maxHealth = 5;
-    private int currentHealth = 5;
+    private int currentHealth;
 
     private void Start()
     {
+        setBulletBackToNormal();
+        currentHealth = maxHealth;
         // calculate gravity using gravity formula
         float timeToApex = jumpTime / 2.0f;
         float gravity = (-2 * jumpHeight) / Mathf.Pow(timeToApex, 2);
@@ -43,6 +45,61 @@ public class PlayerController : MonoBehaviour
 
         // calculate jump velocity req'd for jumpHeight & jumpTime
         initialJumpVelocity = Mathf.Sqrt(jumpHeight * -2 * gravity);
+    }
+
+
+    private void setBulletBackToNormal()
+    {
+        SpriteRenderer sprite = bullet.GetComponent<SpriteRenderer>();
+        sprite.color = Color.yellow;
+        Transform alsoSprite = bullet.GetComponent<Transform>();
+        alsoSprite.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+    }
+    private void Awake()
+    {
+        Messenger<int>.AddListener(GameEvent.PICKUP_HEALTH, this.OnPickupHealth);
+        Messenger<string>.AddListener(GameEvent.POWER_UP, this.powerupChoice);
+    }
+    private void OnDestroy()
+    {
+        Messenger<int>.RemoveListener(GameEvent.PICKUP_HEALTH, this.OnPickupHealth);
+        Messenger<string>.RemoveListener(GameEvent.POWER_UP, this.powerupChoice);
+    }
+
+    IEnumerator powerUpTimer(string powerup)
+    {
+        if (powerup == "Apple") { 
+            SpriteRenderer sprite = bullet.GetComponent<SpriteRenderer>();
+            sprite.color = Color.red;
+            yield return new WaitForSeconds(15);
+            sprite.color = Color.yellow; 
+        }
+        else if (powerup == "Melon")
+        {
+            Transform sprite = bullet.GetComponent<Transform>();
+            sprite.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            yield return new WaitForSeconds(15);
+            sprite.localScale = new Vector3(0.25f, 0.25f, 0.25f);
+        }
+        else if (powerup == "Cherry")
+        {
+            rbody.gravityScale /= 2;
+              yield return new WaitForSeconds(15);
+            rbody.gravityScale *= 2;
+        }
+        else if (powerup == "Pineapple")
+        {
+            moveSpeed *= 2;
+             yield return new WaitForSeconds(15);
+            moveSpeed /= 2; 
+        }
+
+
+    }
+
+    private void powerupChoice(string powerup)
+    {
+        StartCoroutine(powerUpTimer(powerup));
     }
 
     void Update()
@@ -65,13 +122,6 @@ public class PlayerController : MonoBehaviour
             jumpsAvailable = jumpMax;
         }
 
-        //how in the name of god do i transition out of being hurt if i go into it on colission
-        //if (isHurt)
-        //{
-        //    isHurt = false;
-        //    anim.SetBool("isHurt", false);
-
-        //}
 
         if (Input.GetButtonDown("Fire1") )
         {
@@ -92,14 +142,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnPickupHealth(int healthAdded)
+    {
+        Debug.Log("Entered the onPickpHealth");
+        currentHealth += healthAdded;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        float healthPercent = ((float)currentHealth) / maxHealth;
+        Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, healthPercent);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "ToLevelTwo")
-        {
-
-            gameController.ChangeToLevelTwo();
-          
-        }
+        
         if (collision.gameObject.tag == "respawn" )
         { 
         respawnPt = collision.transform;
@@ -174,7 +231,22 @@ public class PlayerController : MonoBehaviour
         destoryBall(go);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void Hit()
+    {
+        currentHealth -= 1;
+        Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, (currentHealth / maxHealth));
+        Debug.Log("Health: " + currentHealth);
+        if (currentHealth <= 0)
+        {
+            //Debug.Break();
+            Messenger.Broadcast(GameEvent.PLAYER_DEAD);
+        }
+    }
+
+
+
+
+        private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Platform" || collision.gameObject.tag == "OneWayPlatform")
         {
@@ -185,7 +257,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.gameObject.tag == "Enemy" && currentHealth != 0)
         {
-            currentHealth--;
+            Hit();
             anim.SetTrigger("ouch");
         }
     }

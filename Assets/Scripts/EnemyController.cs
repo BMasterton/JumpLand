@@ -7,6 +7,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] Animator anim;
     int maxHealth = 3;
     int health = 3;
+    int enemyPointWorth = 100;
 
     bool hit = false;
     // Start is called before the first frame update
@@ -21,17 +22,42 @@ public class EnemyController : MonoBehaviour
        
     }
 
+    IEnumerator waitBeforeDestroy(GameObject gameObject)
+    {
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log(gameObject.tag);
+        Destroy(gameObject);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Bullet")
         {
-           
-            health--;
-            anim.SetTrigger("ouch");  //not sure how to get the animation to work correctly and go back to idle 
-            if ( health == 0)
+            SpriteRenderer sprite = collision.gameObject.GetComponent<SpriteRenderer>();
+            if(sprite.color == Color.red)
             {
-                Destroy(gameObject);
+                health -= 2;
+                anim.SetTrigger("ouch");   
+                if (health <= 0)
+                {
+                    //for every enemy you make add this and have different point values 
+                    Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, enemyPointWorth);
+                    anim.SetTrigger("dead");
+                    StartCoroutine(waitBeforeDestroy(this.gameObject));
+                }
             }
+            else if (sprite.color == Color.yellow) { 
+                health--;
+            anim.SetTrigger("ouch");  
+            if ( health <= 0)
+            {
+                //for every enemy you make add this and have different point values 
+                Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, enemyPointWorth);
+                    anim.SetTrigger("dead");
+                    StartCoroutine(waitBeforeDestroy(this.gameObject));
+                }
+            }
+           
             //how to get to stop aniimation 
             //hit = false;
             //anim.SetBool("hit", hit) ;

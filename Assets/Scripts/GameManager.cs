@@ -1,18 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject platform;
     [SerializeField] PlayerController player;
+    [SerializeField] private UIController ui;
+    private int score = 0;
 
-    private int playerScore = 0;
+   
   
     // Start is called before the first frame update
     void Start()
     {
+        ui.UpdateScore(score);
+    }
 
+
+    private void Awake()
+    {
+        Messenger<int>.AddListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
+       
+        Messenger.AddListener(GameEvent.RESTART_GAME, OnRestartGame);
+    }
+    private void OnDestroy()
+    {
+        Messenger<int>.RemoveListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
+       
+        Messenger.RemoveListener(GameEvent.RESTART_GAME, OnRestartGame);
+    }
+
+    private void OnEnemyDead(int pointWorth)
+    {
+        score += pointWorth;
+        ui.UpdateScore(score);
     }
 
     // Update is called once per frame
@@ -21,26 +44,12 @@ public class GameManager : MonoBehaviour
       
     }
 
-    public void ChangeToLevelTwo()
+    public void OnRestartGame()
     {
-        //change level stuff here 
-        //change scene 
-        //load new one and stuffs, redo timers, and all that 
+        SceneManager.LoadScene(0);
     }
 
-    public void ChangeToLevelThree()
-    {
-        //change level stuff here 
-        //change scene 
-        //load new one and stuffs, redo timers, and all that 
-    }
-
-    public void ChangeToLevelFour()
-    {
-        //change level stuff here 
-        //change scene 
-        //load new one and stuffs, redo timers, and all that 
-    }
+  
 
     public void EndGame()
     {

@@ -12,6 +12,11 @@ TagManager:
   - Enemy
   - respawn
   - ToLevelTwo
+  - Apple
+  - Melon
+  - Pineapple
+  - Health
+  - Cherry
   layers:
   - Default
   - TransparentFX
