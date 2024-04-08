@@ -6,7 +6,6 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class GhostChaseState : GhostStateMachineBehaviour
 {
-    private bool facingRight = true;    // true if facing right
    
     float speed = 2.0f ;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state

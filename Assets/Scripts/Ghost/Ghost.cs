@@ -19,6 +19,9 @@ public class Ghost : MonoBehaviour
     Vector3 lastKnownPos;
     Rigidbody2D rb;
 
+    int ghostHealth = 5;
+    int ghostPointWorth = 500;
+
     void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
@@ -26,7 +29,6 @@ public class Ghost : MonoBehaviour
     }
     void Flip()
     {
-        Debug.Log("flip");
         // flip the direction the player is facing
         facingRight = !facingRight;
         transform.Rotate(Vector3.up, 180);
@@ -41,16 +43,6 @@ public class Ghost : MonoBehaviour
     void Update()
     {
 
-        // float currentValue = rb.velocity.x;
-        //if (rb.velocity.x > 0 && !facingRight)
-        //{
-        //    Flip();
-        //}
-        //else if (rb.velocity.x < 0 && facingRight )
-        //{
-        //    Flip();
-        //}
-
         // headed right && not facing right
         if (transform.position.x > lastKnownPos.x && !facingRight)
         {
@@ -62,17 +54,6 @@ public class Ghost : MonoBehaviour
             Flip();
         }
 
-        // pastValue = currentValue;
-        //// float currentValue = rb.velocity.x;
-        // if (rb.velocity.x - pastValue < 0)
-        // {
-        //     Flip();
-        // }
-        // else if(rb.velocity.x - pastValue > 0) { 
-        //     Flip();
-        // }
-
-        // pastValue = currentValue;
         lastKnownPos = transform.position; 
     }
 
@@ -83,11 +64,12 @@ public class Ghost : MonoBehaviour
     
     public void ShootEvent()
     {
-        Debug.Log("shooting");
+        //Debug.Log("shooting");
         // spawn a projectile using the spawnPoint
         GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPt.position, projectileSpawnPt.rotation);
         // move it forward
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+        //Determine which way the bullet should be shot out at
         if(facingRight)
         {
             rb.AddForce(Vector2.right * 200 * 5);
@@ -97,5 +79,43 @@ public class Ghost : MonoBehaviour
             rb.AddForce(Vector2.left * 200 * 5);
         }
        
+    }
+
+    IEnumerator waitBeforeDestroy(GameObject gameObject)
+    {
+        yield return new WaitForSeconds(0.5f);
+        Debug.Log(gameObject.tag);
+        Destroy(gameObject);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Bullet") {
+            SpriteRenderer sprite = collision.gameObject.GetComponent<SpriteRenderer>();
+            Animator anim = gameObject.GetComponent<Animator>();
+            if (sprite.color == Color.red)
+            {
+                ghostHealth -= 2;
+                anim.SetTrigger("ouch");
+                if (ghostHealth <= 0)
+                {
+                    Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, ghostPointWorth);
+                    anim.SetTrigger("die");
+                    StartCoroutine(waitBeforeDestroy(this.gameObject));
+                }
+            }
+            else if (sprite.color == Color.yellow)
+            {
+                ghostHealth--;
+                anim.SetTrigger("ouch");
+                if (ghostHealth <= 0)
+                {
+                    Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, ghostPointWorth);
+                    anim.SetTrigger("die");
+                    StartCoroutine(waitBeforeDestroy(this.gameObject));
+                }
+            }
+
+        }
     }
 }

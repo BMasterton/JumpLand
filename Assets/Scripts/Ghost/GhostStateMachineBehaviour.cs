@@ -9,7 +9,7 @@ public class GhostStateMachineBehaviour : StateMachineBehaviour
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Debug.Log(this + ".OnStateEnter()");
+        //Debug.Log(this + ".OnStateEnter()");
         enemy = animator.gameObject.GetComponent<Ghost>();
 
     }

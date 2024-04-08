@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
         // calculate gravity using gravity formula
         float timeToApex = jumpTime / 2.0f;
         float gravity = (-2 * jumpHeight) / Mathf.Pow(timeToApex, 2);
-        Debug.Log("gravity:" + gravity);
+       // Debug.Log("gravity:" + gravity);
 
         // adjust gravity scale of player based on gravity required for jumpHeight & jumpTime
         rbody.gravityScale = gravity / Physics2D.gravity.y;
@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnPickupHealth(int healthAdded)
     {
-        Debug.Log("Entered the onPickpHealth");
+        //Debug.Log("Entered the onPickpHealth");
         currentHealth += healthAdded;
         if (currentHealth > maxHealth)
         {
@@ -240,7 +240,7 @@ public class PlayerController : MonoBehaviour
     {
         currentHealth -= 1;
         Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, ((float)currentHealth / (float)maxHealth));
-        Debug.Log("Health: " + currentHealth);
+        //Debug.Log("Health: " + currentHealth);
         if (currentHealth <= 0)
         {
             //Debug.Break();
@@ -276,7 +276,8 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.gameObject.tag == "FatBird" || 
             collision.gameObject.tag == "AngryPig" ||
-            collision.gameObject.tag == "Ghost"
+            collision.gameObject.tag == "Ghost" ||
+            collision.gameObject.tag == "Projectile"
             && currentHealth != 0)
         {
             Hit();

@@ -25,33 +25,36 @@ public class CollectableItems : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "Player" && this.gameObject.tag == "Apple" 
-            || other.gameObject.tag == "Player" &&  this.gameObject.tag == "Pineapple"
-            || other.gameObject.tag == "Player" &&  this.gameObject.tag == "Melon"
-            || other.gameObject.tag == "Player" &&  this.gameObject.tag == "Cherry")
-        {
-            Messenger<string>.Broadcast(GameEvent.POWER_UP, this.gameObject.tag);
-            anim.SetTrigger("collected");
-            StartCoroutine(waitBeforeDestroy(this.gameObject));
-
-        }
-       
-    }
-
-    //private void OnTriggerEnter2D(Collider2D collision)
+    //private void OnCollisionEnter2D(Collision2D other)
     //{
-
-      
-    //    if(collision.gameObject.tag == "Melon")
+    //    if (other.gameObject.tag == "Player" && this.gameObject.tag == "Apple" 
+    //        || other.gameObject.tag == "Player" &&  this.gameObject.tag == "Pineapple"
+    //        || other.gameObject.tag == "Player" &&  this.gameObject.tag == "Melon"
+    //        || other.gameObject.tag == "Player" &&  this.gameObject.tag == "Cherry")
     //    {
-
     //        Messenger<string>.Broadcast(GameEvent.POWER_UP, this.gameObject.tag);
     //        anim.SetTrigger("collected");
     //        StartCoroutine(waitBeforeDestroy(this.gameObject));
+
     //    }
-
-
+       
     //}
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+
+        if (collision.gameObject.tag == "Player" && this.gameObject.tag == "Apple"
+             || collision.gameObject.tag == "Player" && this.gameObject.tag == "Pineapple"
+            || collision.gameObject.tag == "Player" && this.gameObject.tag == "Melon"
+            || collision.gameObject.tag == "Player" && this.gameObject.tag == "Cherry")
+        {
+
+            Messenger<string>.Broadcast(GameEvent.POWER_UP, this.gameObject.tag);
+            anim.SetTrigger("collected");
+            StartCoroutine(waitBeforeDestroy(this.gameObject));
+        }
+
+
+    }
 }
