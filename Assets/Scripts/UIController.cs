@@ -10,6 +10,7 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] private TextMeshProUGUI scoreValue;
     [SerializeField] private Image healthBar;
+    [SerializeField] private OptionsPopup optionsPopup;
     void Start()
     {
         UpdateHealth(1.0f);
@@ -48,6 +49,32 @@ public class UIController : MonoBehaviour
     }
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape) && !optionsPopup.IsActive())
+        {
+            SetGameActive(false);
+            optionsPopup.Open();
+        }
+    }
+
+    private void OnPopupClosed()
+    {
+            SetGameActive(true);
+    }
+
+    private void OnPopupOpened()
+    {
+            SetGameActive(false);
+    }
+
+    public void SetGameActive(bool active)
+    {
+        if (active)
+        {
+            Time.timeScale = 1; // unpause the game
+        }
+        else
+        {
+            Time.timeScale = 0; // pause the game
+        }
     }
 }
