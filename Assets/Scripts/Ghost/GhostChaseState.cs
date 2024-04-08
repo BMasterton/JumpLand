@@ -1,23 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class GhostAttackState : GhostStateMachineBehaviour
+public class GhostChaseState : GhostStateMachineBehaviour
 {
+
+    float speed = 2.0f ;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        enemy.transform.LookAt(enemy.Player.transform.position);
-        if (enemy.GetDistanceFromPlayer() > enemy.AttackRangeStop)
+        float step = speed * Time.deltaTime;
+        enemy.transform.position = Vector2.MoveTowards(enemy.transform.position,enemy.Player.transform.position, step);
+        if (enemy.GetDistanceFromPlayer() < enemy.AttackRange)
         {
-            animator.SetTrigger("chase");
-
+            animator.SetTrigger("attack");
         }
     }
 
