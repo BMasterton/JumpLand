@@ -5,21 +5,28 @@ using UnityEngine;
 
 public class GhostAttackState : GhostStateMachineBehaviour
 {
-
+    float attackTimer;
+    float attackTimeThreshold = 3.0f;
     float speed = 2.0f;
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         base.OnStateEnter(animator, stateInfo, layerIndex);
+        attackTimer = 0;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //enemy.transform.LookAt(enemy.Player.transform.position);
+        attackTimer += Time.deltaTime;
+        if(attackTimer > attackTimeThreshold)
+        {
+            enemy.ShootEvent();
+            attackTimer = 0;
+        }
+
         float step = speed * Time.deltaTime;
         enemy.transform.position = Vector2.MoveTowards(enemy.transform.position, enemy.Player.transform.position, step);
-        
         if (enemy.GetDistanceFromPlayer() > enemy.AttackRangeStop)
         {
             animator.SetTrigger("chase");

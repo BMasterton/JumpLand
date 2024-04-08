@@ -14,12 +14,23 @@ public class Ghost : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;       // for creating "bullets"
     [SerializeField] public Transform projectileSpawnPt;        // spawn point for bullets    
     private float projectileForce = 35f;
+    bool facingRight = false;
+
+    Vector3 lastKnownPos;
+    Rigidbody2D rb;
 
     void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
+        rb = GetComponent<Rigidbody2D>();
     }
-
+    void Flip()
+    {
+        Debug.Log("flip");
+        // flip the direction the player is facing
+        facingRight = !facingRight;
+        transform.Rotate(Vector3.up, 180);
+    }
 
     public float GetDistanceFromPlayer()
     {
@@ -29,15 +40,62 @@ public class Ghost : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+        // float currentValue = rb.velocity.x;
+        //if (rb.velocity.x > 0 && !facingRight)
+        //{
+        //    Flip();
+        //}
+        //else if (rb.velocity.x < 0 && facingRight )
+        //{
+        //    Flip();
+        //}
+
+        // headed right && not facing right
+        if (transform.position.x > lastKnownPos.x && !facingRight)
+        {
+            Flip();
+        }
+        // headed left && facing right
+        else if (transform.position.x < lastKnownPos.x && facingRight)
+        {
+            Flip();
+        }
+
+        // pastValue = currentValue;
+        //// float currentValue = rb.velocity.x;
+        // if (rb.velocity.x - pastValue < 0)
+        // {
+        //     Flip();
+        // }
+        // else if(rb.velocity.x - pastValue > 0) { 
+        //     Flip();
+        // }
+
+        // pastValue = currentValue;
+        lastKnownPos = transform.position; 
     }
 
+    public void MoveTowards(Vector3 target)
+    {
+        rb.MovePosition(target);
+    }
+    
     public void ShootEvent()
     {
+        Debug.Log("shooting");
         // spawn a projectile using the spawnPoint
         GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPt.position, projectileSpawnPt.rotation);
         // move it forward
-        Rigidbody rb = projectile.GetComponent<Rigidbody>();
-        rb.AddForce(transform.forward * projectileForce, ForceMode.Impulse);
+        Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+        if(facingRight)
+        {
+            rb.AddForce(Vector2.right * 200 * 5);
+        }
+        else
+        {
+            rb.AddForce(Vector2.left * 200 * 5);
+        }
+       
     }
 }

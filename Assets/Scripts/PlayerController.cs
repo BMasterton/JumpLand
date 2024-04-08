@@ -248,10 +248,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    IEnumerator makeInvulnerable(GameObject player)
+    {
+        Debug.Log("Got into the makeInvulnerable");
+        Physics2D.IgnoreLayerCollision(8, 7, true);
+        yield return new WaitForSeconds(1f);
+        //for (int i = 0; i < 5; i ++)
+        //{
+        //    SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+        //    sprite.color = new Color(1,0,0,0.5f);
+        //    yield return new WaitForSeconds(0.2f);
+        //    sprite.color = Color.white;
+        //}
+
+        Physics2D.IgnoreLayerCollision(8,7, false);
+    }
 
 
-
-        private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Platform" || collision.gameObject.tag == "OneWayPlatform")
         {
@@ -266,7 +280,9 @@ public class PlayerController : MonoBehaviour
             && currentHealth != 0)
         {
             Hit();
+            //StartCoroutine(makeInvulnerable(this.gameObject));
             anim.SetTrigger("ouch");
+
         }
     }
 }
