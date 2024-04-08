@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour
         {
             currentHealth = maxHealth;
         }
-        float healthPercent = ((float)currentHealth) / maxHealth;
+        float healthPercent = ((float)currentHealth) / (float)maxHealth;
         Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, healthPercent);
     }
 
@@ -172,6 +172,11 @@ public class PlayerController : MonoBehaviour
             // end game screen with restart and try again.
             Application.Quit();
         }
+        //else if(collision.gameObject.tag == "Melon")
+        //{
+        //    Transform sprite = bullet.GetComponent<Transform>();
+        //    sprite.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        //}
        
 
     }
@@ -234,7 +239,7 @@ public class PlayerController : MonoBehaviour
     public void Hit()
     {
         currentHealth -= 1;
-        Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, (currentHealth / maxHealth));
+        Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, ((float)currentHealth / (float)maxHealth));
         Debug.Log("Health: " + currentHealth);
         if (currentHealth <= 0)
         {

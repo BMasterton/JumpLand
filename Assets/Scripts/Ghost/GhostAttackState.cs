@@ -16,9 +16,10 @@ public class GhostAttackState : GhostStateMachineBehaviour
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        enemy.transform.LookAt(enemy.Player.transform.position);
+        //enemy.transform.LookAt(enemy.Player.transform.position);
         float step = speed * Time.deltaTime;
         enemy.transform.position = Vector2.MoveTowards(enemy.transform.position, enemy.Player.transform.position, step);
+        
         if (enemy.GetDistanceFromPlayer() > enemy.AttackRangeStop)
         {
             animator.SetTrigger("chase");
