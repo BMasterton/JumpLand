@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+    
     [SerializeField] Animator anim;
-    int maxHealth = 3;
-    int health = 3;
-    int enemyPointWorth = 100;
+    private bool pigFacingRight = true;    // true if facing right
+    int birdHealth = 3;
+    int pigHealth = 5;
+    int birdPointWorth = 100;
+    int pigPointWorth = 250;
 
-    bool hit = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +31,13 @@ public class EnemyController : MonoBehaviour
         Destroy(gameObject);
     }
 
+    void Flip()
+    {
+        // flip the direction the player is facing
+        pigFacingRight = !pigFacingRight;
+        transform.Rotate(Vector3.up, 180);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Bullet")
@@ -36,23 +45,54 @@ public class EnemyController : MonoBehaviour
             SpriteRenderer sprite = collision.gameObject.GetComponent<SpriteRenderer>();
             if(sprite.color == Color.red)
             {
-                health -= 2;
+                if(this.gameObject.tag == "FatBird")
+                {
+                    birdHealth -= 2;
+                }
+                else if (this.gameObject.tag == "AngryPig")
+                {
+                    pigHealth -= 2;
+                }
                 anim.SetTrigger("ouch");   
-                if (health <= 0)
+                if (birdHealth <= 0 || pigHealth <=0)
                 {
                     //for every enemy you make add this and have different point values 
-                    Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, enemyPointWorth);
+                    if (this.gameObject.tag == "FatBird")
+                    {
+                         Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, birdPointWorth);
+                    }
+                    else if (this.gameObject.tag == "AngryPig")
+                    {
+                        Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, pigPointWorth);
+                    }
+                   
                     anim.SetTrigger("dead");
                     StartCoroutine(waitBeforeDestroy(this.gameObject));
                 }
             }
-            else if (sprite.color == Color.yellow) { 
-                health--;
-            anim.SetTrigger("ouch");  
-            if ( health <= 0)
+            else if (sprite.color == Color.yellow) {
+                if (this.gameObject.tag == "FatBird")
+                {
+                    birdHealth--;
+                }
+                else if (this.gameObject.tag == "AngryPig")
+                {
+                    pigHealth--;
+                }
+                anim.SetTrigger("ouch");  
+            if ( birdHealth <= 0 || pigHealth <= 0)
             {
-                //for every enemy you make add this and have different point values 
-                Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, enemyPointWorth);
+                    //for every enemy you make add this and have different point values 
+
+                    if (this.gameObject.tag == "FatBird")
+                    {
+                        Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, birdPointWorth);
+                    }
+                    else if (this.gameObject.tag == "AngryPig")
+                    {
+                        Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, pigPointWorth);
+                    }
+                    
                     anim.SetTrigger("dead");
                     StartCoroutine(waitBeforeDestroy(this.gameObject));
                 }

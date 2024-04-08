@@ -17,6 +17,9 @@ TagManager:
   - Pineapple
   - Health
   - Cherry
+  - FatBird
+  - AngryPig
+  - Ghost
   layers:
   - Default
   - TransparentFX

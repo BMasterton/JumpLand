@@ -255,7 +255,10 @@ public class PlayerController : MonoBehaviour
             jumpsAvailable = jumpMax;
 
         }
-        else if (collision.gameObject.tag == "Enemy" && currentHealth != 0)
+        else if (collision.gameObject.tag == "FatBird" || 
+            collision.gameObject.tag == "AngryPig" ||
+            collision.gameObject.tag == "Ghost"
+            && currentHealth != 0)
         {
             Hit();
             anim.SetTrigger("ouch");

@@ -18,7 +18,9 @@ public class Bullet : MonoBehaviour
 
     IEnumerator destoryBullet(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Untagged" || collision.gameObject.tag == "platform")
+        if (collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Untagged" 
+            || collision.gameObject.tag == "platform" || collision.gameObject.tag == "FatBird"
+            || collision.gameObject.tag == "AngryPig")
         {
             //Destroy(collision.gameObject);
             Destroy(gameObject);
