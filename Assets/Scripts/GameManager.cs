@@ -24,12 +24,17 @@ public class GameManager : MonoBehaviour
         Messenger<int>.AddListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
        
         Messenger.AddListener(GameEvent.RESTART_GAME, OnRestartGame);
+        Messenger.AddListener(GameEvent.PLAYER_DEAD, GameOverPopUp);
+
+
     }
     private void OnDestroy()
     {
         Messenger<int>.RemoveListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
        
         Messenger.RemoveListener(GameEvent.RESTART_GAME, OnRestartGame);
+        Messenger.RemoveListener(GameEvent.PLAYER_DEAD, GameOverPopUp);
+
     }
 
     private void OnEnemyDead(int pointWorth)
@@ -42,6 +47,13 @@ public class GameManager : MonoBehaviour
     void Update()
     {
       
+    }
+
+ 
+
+    private void GameOverPopUp()
+    {
+        ui.OpenGameOverPopup();
     }
 
     public void OnRestartGame()

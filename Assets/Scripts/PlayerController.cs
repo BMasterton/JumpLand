@@ -253,14 +253,6 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Got into the makeInvulnerable");
         Physics2D.IgnoreLayerCollision(8, 7, true);
         yield return new WaitForSeconds(1f);
-        //for (int i = 0; i < 5; i ++)
-        //{
-        //    SpriteRenderer sprite = GetComponent<SpriteRenderer>();
-        //    sprite.color = new Color(1,0,0,0.5f);
-        //    yield return new WaitForSeconds(0.2f);
-        //    sprite.color = Color.white;
-        //}
-
         Physics2D.IgnoreLayerCollision(8,7, false);
     }
 

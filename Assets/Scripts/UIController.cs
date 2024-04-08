@@ -11,6 +11,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreValue;
     [SerializeField] private Image healthBar;
     [SerializeField] private OptionsPopup optionsPopup;
+    [SerializeField] private GameOverPopup gameOverPopup;
     void Start()
     {
         UpdateHealth(1.0f);
@@ -29,7 +30,10 @@ public class UIController : MonoBehaviour
         Messenger<float>.RemoveListener(GameEvent.HEALTH_CHANGED, OnHealthChanged);
 
     }
-
+    public void OpenGameOverPopup()
+    {
+        gameOverPopup.Open();
+    }
 
 
     public void OnHealthChanged(float healthPercentage)
