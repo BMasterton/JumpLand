@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    [SerializeField] private GameObject impactPrefab;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,10 +21,22 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Untagged" 
             || collision.gameObject.tag == "platform" || collision.gameObject.tag == "FatBird"
-            || collision.gameObject.tag == "AngryPig")
+            || collision.gameObject.tag == "AngryPig" || collision.gameObject.tag == "Ghost"
+            || collision.gameObject.tag == "Slime")
         {
+            if (collision.gameObject.tag == "Slime"
+           || collision.gameObject.tag == "AngryPig"
+           || collision.gameObject.tag == "Ghost"
+           || collision.gameObject.tag == "FatBird")
+            {
+                GameObject impact = Instantiate(impactPrefab, transform.position, Quaternion.identity);
+                Destroy(gameObject);
+                Destroy(impact, 1);     // destroy the explosion after 2 seconds
+
+                 // destroy the projectile
+            }
             //Destroy(collision.gameObject);
-            Destroy(gameObject);
+           Destroy(gameObject);
         }
 
        
@@ -37,12 +50,7 @@ public class Bullet : MonoBehaviour
         {
 
         StartCoroutine(destoryBullet(collision));
-        //Destroy(gameObject);
-        //if (collision.gameObject.tag == "Enemy")
-        //{
-          
-        //    //Destroy(collision.gameObject);
-        //    Destroy(gameObject);
-        //}
+       
+       
     }
 }

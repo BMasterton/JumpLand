@@ -2,65 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ghost : MonoBehaviour
+public class Slime : MonoBehaviour
 {
-    public float IdleTime { get; private set; } = 3.0f;         // time to spend in idle state
-    public float ChaseRange { get; private set; } = 10.0f;      // when player is closer than this, chase
-    public float AttackRange { get; private set; } = 7.0f;      // when player is closer than this, attack
-    public float AttackRangeStop { get; private set; } = 20.0f; // when player is farther than this, chase
-
-    public GameObject Player { get; private set; }
 
     [SerializeField] private GameObject projectilePrefab;       // for creating "bullets"
     [SerializeField] public Transform projectileSpawnPt;        // spawn point for bullets    
     bool facingRight = false;
 
-    Vector3 lastKnownPos;
-    Rigidbody2D rb;
+    int slimeHealth = 4;
+    int slimePointWorth = 350;
 
-    int ghostHealth = 5;
-    int ghostPointWorth = 500;
+    float attackTimer;
+    float attackTimeThreshold = 3.0f;
 
-    void Start()
-    {
-        Player = GameObject.FindGameObjectWithTag("Player");
-        rb = GetComponent<Rigidbody2D>();
-    }
+
     void Flip()
     {
         // flip the direction the player is facing
         facingRight = !facingRight;
         transform.Rotate(Vector3.up, 180);
     }
-
-    public float GetDistanceFromPlayer()
+    // Start is called before the first frame update
+    void Start()
     {
-        //Get the distance(in units) from the enemy to the player
-        return Vector3.Distance(transform.position, Player.transform.position);
+        attackTimer = 0;
     }
+
     // Update is called once per frame
     void Update()
     {
-
-        // headed right && not facing right
-        if (transform.position.x > lastKnownPos.x && !facingRight)
+        attackTimer += Time.deltaTime;
+        if (attackTimer > attackTimeThreshold)
         {
-            Flip();
+            ShootEvent();
+            attackTimer = 0;
         }
-        // headed left && facing right
-        else if (transform.position.x < lastKnownPos.x && facingRight)
-        {
-            Flip();
-        }
-
-        lastKnownPos = transform.position; 
     }
 
-    public void MoveTowards(Vector3 target)
-    {
-        rb.MovePosition(target);
-    }
-    
     public void ShootEvent()
     {
         //Debug.Log("shooting");
@@ -69,7 +47,7 @@ public class Ghost : MonoBehaviour
         // move it forward
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
         //Determine which way the bullet should be shot out at
-        if(facingRight)
+        if (facingRight)
         {
             rb.AddForce(Vector2.right * 200 * 5);
         }
@@ -77,7 +55,7 @@ public class Ghost : MonoBehaviour
         {
             rb.AddForce(Vector2.left * 200 * 5);
         }
-       
+
     }
 
     IEnumerator waitBeforeDestroy(GameObject gameObject)
@@ -89,27 +67,28 @@ public class Ghost : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Bullet") {
+        if (collision.gameObject.tag == "Bullet")
+        {
             SpriteRenderer sprite = collision.gameObject.GetComponent<SpriteRenderer>();
             Animator anim = gameObject.GetComponent<Animator>();
             if (sprite.color == Color.red)
             {
-                ghostHealth -= 2;
+                slimeHealth -= 2;
                 anim.SetTrigger("ouch");
-                if (ghostHealth <= 0)
+                if (slimeHealth <= 0)
                 {
-                    Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, ghostPointWorth);
+                    Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, slimePointWorth);
                     anim.SetTrigger("die");
                     StartCoroutine(waitBeforeDestroy(this.gameObject));
                 }
             }
             else if (sprite.color == Color.yellow)
             {
-                ghostHealth--;
+                slimeHealth--;
                 anim.SetTrigger("ouch");
-                if (ghostHealth <= 0)
+                if (slimeHealth <= 0)
                 {
-                    Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, ghostPointWorth);
+                    Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, slimePointWorth);
                     anim.SetTrigger("die");
                     StartCoroutine(waitBeforeDestroy(this.gameObject));
                 }

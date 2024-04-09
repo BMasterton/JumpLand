@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform bulletSpawnPt;
     [SerializeField] Transform respawnPt;
     [SerializeField] GameManager gameController;
+    [SerializeField] UIController ui;
 
     private float horizInput;           // store horizontal input for used in FixedUpdate()
     private float moveSpeed = 450.0f;   // 4.5 * 100 newtons
@@ -158,19 +159,19 @@ public class PlayerController : MonoBehaviour
     {
         
         if (collision.gameObject.tag == "respawn" )
-        { 
-        respawnPt = collision.transform;
+        {
+            respawnPt = collision.transform;
         }
             
         if (collision.gameObject.tag == "Bounds" && currentHealth != 0)
         {
-            currentHealth--;
+            Hit();
             transform.position = respawnPt.position;
         }
         else if(collision.gameObject.tag == "Bounds" && currentHealth == 0)
         {
             // end game screen with restart and try again.
-            Application.Quit();
+            Messenger.Broadcast(GameEvent.PLAYER_DEAD);
         }
         //else if(collision.gameObject.tag == "Melon")
         //{
@@ -269,6 +270,7 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.tag == "FatBird" || 
             collision.gameObject.tag == "AngryPig" ||
             collision.gameObject.tag == "Ghost" ||
+             collision.gameObject.tag == "Slime" ||
             collision.gameObject.tag == "Projectile"
             && currentHealth != 0)
         {

@@ -21,6 +21,7 @@ TagManager:
   - AngryPig
   - Ghost
   - Projectile
+  - Slime
   layers:
   - Default
   - TransparentFX

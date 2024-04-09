@@ -29,7 +29,20 @@ public class MoveAlongPathController : MonoBehaviour
     {
 
         transform.position = Vector2.MoveTowards(transform.position, setPaths[currentPathIndex], speed * Time.deltaTime);
-        if (transform.position.x == setPaths[currentPathIndex].x && transform.position.y == setPaths[currentPathIndex].y && this.gameObject.tag == "AngryPig")
+        if (transform.position.x == setPaths[currentPathIndex].x && transform.position.y == setPaths[currentPathIndex].y 
+            && this.gameObject.tag == "AngryPig" )
+        {
+
+            currentPathIndex++;
+            Flip();
+            if (currentPathIndex >= setPaths.Length)
+            {
+                currentPathIndex = 0;
+            }
+
+        }
+        else if (transform.position.x == setPaths[currentPathIndex].x && transform.position.y == setPaths[currentPathIndex].y
+           && this.gameObject.tag == "Slime")
         {
 
             currentPathIndex++;
