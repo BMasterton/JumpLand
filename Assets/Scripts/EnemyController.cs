@@ -28,7 +28,7 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator waitBeforeDestroy(GameObject gameObject)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.25f);
         Debug.Log(gameObject.tag);
         Destroy(gameObject);
     }
@@ -59,6 +59,8 @@ public class EnemyController : MonoBehaviour
                 anim.SetTrigger("ouch");   
                 if (birdHealth <= 0 || pigHealth <=0)
                 {
+                    anim.SetTrigger("dead");
+                    StartCoroutine(waitBeforeDestroy(this.gameObject));
                     //for every enemy you make add this and have different point values 
                     if (this.gameObject.tag == "FatBird")
                     {
@@ -86,7 +88,8 @@ public class EnemyController : MonoBehaviour
             if ( birdHealth <= 0 || pigHealth <= 0)
             {
                     //for every enemy you make add this and have different point values 
-
+                    anim.SetTrigger("dead");
+                    StartCoroutine(waitBeforeDestroy(this.gameObject));
                     if (this.gameObject.tag == "FatBird")
                     {
                         Messenger<int>.Broadcast(GameEvent.ENEMY_DEAD, birdPointWorth);
