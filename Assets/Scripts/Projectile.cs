@@ -12,7 +12,8 @@ public class Projectile : MonoBehaviour
             || collision.gameObject.tag == "Platform"
             || collision.gameObject.tag == "AngryPig"
             || collision.gameObject.tag == "Ghost"
-            || collision.gameObject.tag == "FatBird")
+            || collision.gameObject.tag == "FatBird"
+            || collision.gameObject.tag == "Tree")
         {
             Destroy(this.gameObject);
         }
