@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+    
+    /// Non Audio Serialized Fields   /// 
     [SerializeField] private Rigidbody2D rbody;
     [SerializeField] Animator anim;
     [SerializeField] GameObject bullet;
@@ -11,7 +15,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform respawnPt;
     [SerializeField] GameManager gameController;
     [SerializeField] UIController ui;
+    [SerializeField] Transform fakeHouseSpawn;
 
+    /// Audio Clips ///
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip bulletSound;
+    [SerializeField] private AudioClip damageTakenSound;
+    [SerializeField] private AudioClip fallOffMapSound;
+    [SerializeField] private AudioClip gameOverSound;
+    [SerializeField] private AudioClip spikeTrapSound;
+    [SerializeField] private AudioSource audioSrc;
     private float horizInput;           // store horizontal input for used in FixedUpdate()
     private float moveSpeed = 450.0f;   // 4.5 * 100 newtons
 
@@ -19,18 +32,26 @@ public class PlayerController : MonoBehaviour
     private float jumpTime = 0.75f;     // time of jump in seconds
     private float initialJumpVelocity;  // calculated jump velocity
 
+    // IsGrounded Variables
     private bool isGrounded = false;    // true if player is grounded
     [SerializeField] private Transform groundCheckPoint;    // draw a circle around this to check ground
     [SerializeField] private LayerMask groundLayerMask;     // a layer for all things ground
     private float groundCheckRadius = 0.3f;                 // radius of ground check circle
 
+    //jumping variables
     private int jumpMax = 2;            // # of jumps player can do without touching ground
     private int jumpsAvailable = 0;     // current jumps available to player
 
+    //shooting and flip variables 
     private bool facingRight = true;    // true if facing right
 
+    //health variables
     private int maxHealth = 5;
     private int currentHealth;
+    private bool hasSpikeKey = false;
+    private bool hasEnemyKey = false;
+    private bool hasMazeKey = false;
+
 
     private void Start()
     {
@@ -58,13 +79,43 @@ public class PlayerController : MonoBehaviour
     }
     private void Awake()
     {
+        
         Messenger<int>.AddListener(GameEvent.PICKUP_HEALTH, this.OnPickupHealth);
         Messenger<string>.AddListener(GameEvent.POWER_UP, this.powerupChoice);
+        Messenger<string>.AddListener(GameEvent.KEY_PICKUP, this.foundKey);
+        Messenger.AddListener(GameEvent.TELEPORT, this.teleportPlayer);
+      
     }
+
+    private void teleportPlayer()
+    {
+        transform.position = fakeHouseSpawn.position;
+    }
+
     private void OnDestroy()
     {
         Messenger<int>.RemoveListener(GameEvent.PICKUP_HEALTH, this.OnPickupHealth);
         Messenger<string>.RemoveListener(GameEvent.POWER_UP, this.powerupChoice);
+        Messenger<string>.RemoveListener(GameEvent.KEY_PICKUP, this.foundKey);
+        Messenger.RemoveListener(GameEvent.TELEPORT, this.teleportPlayer);
+       
+    }
+
+
+    public void foundKey(string keyName)
+    {
+        if(keyName == "SpikeKey")
+        {
+            hasSpikeKey = true;
+        }
+        else if (keyName == "MazeKey")
+        {
+            hasMazeKey = true;
+        }
+        else if (keyName == "EnemyKey")
+        {
+            hasEnemyKey = true;
+        }
     }
 
     IEnumerator powerUpTimer(string powerup)
@@ -155,33 +206,7 @@ public class PlayerController : MonoBehaviour
         Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, healthPercent);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        
-        if (collision.gameObject.tag == "respawn" )
-        {
-            respawnPt = collision.transform;
-        }
-            
-        if (collision.gameObject.tag == "Bounds" && currentHealth != 0)
-        {
-            Hit();
-            transform.position = respawnPt.position;
-        }
-        else if(collision.gameObject.tag == "Bounds" && currentHealth == 0)
-        {
-            // end game screen with restart and try again.
-            Messenger.Broadcast(GameEvent.PLAYER_DEAD);
-        }
-        //else if(collision.gameObject.tag == "Melon")
-        //{
-        //    Transform sprite = bullet.GetComponent<Transform>();
-        //    sprite.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        //}
-       
-
-    }
-
+   
     private void OnDrawGizmos()
     {
         // draw the ground check sphere in the Scene
@@ -200,10 +225,12 @@ public class PlayerController : MonoBehaviour
         // tell the player to jump
         rbody.velocity = new Vector2(rbody.velocity.x, initialJumpVelocity);
         jumpsAvailable--;
-        if(jumpsAvailable == 1) { 
+        if(jumpsAvailable == 1) {
+            audioSrc.PlayOneShot(jumpSound);
             anim.SetTrigger("jump");    // notify animator
         }else if (jumpsAvailable == 0)
         {
+            audioSrc.PlayOneShot(jumpSound);
             anim.SetTrigger("doubleJump");
         }
        
@@ -227,10 +254,12 @@ public class PlayerController : MonoBehaviour
             GameObject go = Instantiate(bullet, bulletSpawnPt.position, bullet.transform.rotation);
         if (facingRight)
         {
+            audioSrc.PlayOneShot(bulletSound);
             go.GetComponent<Rigidbody2D>().AddForce(Vector2.right * 200 * 5);
         }
         else
         {
+            audioSrc.PlayOneShot(bulletSound);
             go.GetComponent<Rigidbody2D>().AddForce(Vector2.left * 200 * 5);
         }
            
@@ -240,11 +269,12 @@ public class PlayerController : MonoBehaviour
     public void Hit()
     {
         currentHealth -= 1;
+        audioSrc.PlayOneShot(damageTakenSound);
         Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, ((float)currentHealth / (float)maxHealth));
         //Debug.Log("Health: " + currentHealth);
         if (currentHealth <= 0)
         {
-            //Debug.Break();
+            audioSrc.PlayOneShot(gameOverSound);
             Messenger.Broadcast(GameEvent.PLAYER_DEAD);
         }
     }
@@ -255,6 +285,36 @@ public class PlayerController : MonoBehaviour
         Physics2D.IgnoreLayerCollision(8, 7, true);
         yield return new WaitForSeconds(1f);
         Physics2D.IgnoreLayerCollision(8,7, false);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.gameObject.tag == "respawn")
+        {
+            respawnPt = collision.transform;
+        }
+
+        if (collision.gameObject.tag == "Bounds" && currentHealth != 0)
+        {
+            Hit();
+            audioSrc.PlayOneShot(fallOffMapSound);
+            transform.position = respawnPt.position;
+        }
+        else if (collision.gameObject.tag == "Bounds" && currentHealth == 0)
+        {
+            // end game screen with restart and try again.
+            Messenger.Broadcast(GameEvent.PLAYER_DEAD);
+        }
+        else if (collision.gameObject.tag == "Door"
+            && hasMazeKey == true 
+            && hasEnemyKey == true 
+            && hasSpikeKey == true)
+        {
+            Debug.Log("inside Door collision trigger");
+            // Let the door know it can open 
+            Messenger.Broadcast(GameEvent.DOOR_OPEN);
+        }
     }
 
 
@@ -271,6 +331,7 @@ public class PlayerController : MonoBehaviour
             collision.gameObject.tag == "AngryPig" ||
             collision.gameObject.tag == "Ghost" ||
              collision.gameObject.tag == "Slime" ||
+             collision.gameObject.tag == "Tree" ||
             collision.gameObject.tag == "Projectile"
             && currentHealth != 0)
         {
@@ -278,6 +339,13 @@ public class PlayerController : MonoBehaviour
             //StartCoroutine(makeInvulnerable(this.gameObject));
             anim.SetTrigger("ouch");
 
+        }
+        else if (collision.gameObject.tag == "Spike")
+        {
+
+            Hit();
+            audioSrc.PlayOneShot(spikeTrapSound);
+            transform.position = respawnPt.position;
         }
     }
 }

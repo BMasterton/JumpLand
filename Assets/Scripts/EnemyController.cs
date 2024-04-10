@@ -6,6 +6,8 @@ public class EnemyController : MonoBehaviour
 {
     
     [SerializeField] Animator anim;
+    [SerializeField] private AudioClip hitMarkerSound;
+    [SerializeField] private AudioSource audioSrc;
     private bool pigFacingRight = true;    // true if facing right
     int birdHealth = 3;
     int pigHealth = 5;
@@ -42,6 +44,7 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Bullet")
         {
+            audioSrc.PlayOneShot(hitMarkerSound);
             SpriteRenderer sprite = collision.gameObject.GetComponent<SpriteRenderer>();
             if(sprite.color == Color.red)
             {

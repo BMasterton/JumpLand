@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private GameObject impactPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,13 +23,15 @@ public class Bullet : MonoBehaviour
         if (collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Untagged" 
             || collision.gameObject.tag == "platform" || collision.gameObject.tag == "FatBird"
             || collision.gameObject.tag == "AngryPig" || collision.gameObject.tag == "Ghost"
-            || collision.gameObject.tag == "Slime")
+            || collision.gameObject.tag == "Slime" || collision.gameObject.tag == "Tree")
         {
             if (collision.gameObject.tag == "Slime"
            || collision.gameObject.tag == "AngryPig"
            || collision.gameObject.tag == "Ghost"
-           || collision.gameObject.tag == "FatBird")
+           || collision.gameObject.tag == "FatBird"
+            || collision.gameObject.tag == "Tree")
             {
+                
                 GameObject impact = Instantiate(impactPrefab, transform.position, Quaternion.identity);
                 Destroy(gameObject);
                 Destroy(impact, 1);     // destroy the explosion after 2 seconds
@@ -48,9 +51,9 @@ public class Bullet : MonoBehaviour
         //for now this works to kill enemies but i need to give them health and then do health checks 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-
-        StartCoroutine(destoryBullet(collision));
        
+            StartCoroutine(destoryBullet(collision));
+        
        
     }
 }

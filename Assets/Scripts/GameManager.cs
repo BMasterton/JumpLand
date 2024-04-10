@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
        
         Messenger.AddListener(GameEvent.RESTART_GAME, OnRestartGame);
         Messenger.AddListener(GameEvent.PLAYER_DEAD, GameOverPopUp);
+        Messenger.AddListener(GameEvent.GAME_WIN, GameWinPopup);
 
 
     }
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
        
         Messenger.RemoveListener(GameEvent.RESTART_GAME, OnRestartGame);
         Messenger.RemoveListener(GameEvent.PLAYER_DEAD, GameOverPopUp);
+        Messenger.RemoveListener(GameEvent.GAME_WIN, GameWinPopup);
 
     }
 
@@ -49,7 +51,11 @@ public class GameManager : MonoBehaviour
       
     }
 
- 
+ private void GameWinPopup()
+    {
+        
+        ui.OpenGameWinPopup(score);
+    }
 
     private void GameOverPopUp()
     {

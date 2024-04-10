@@ -18,6 +18,10 @@ public class GameOverPopup : MonoBehaviour
         
     }
 
+
+
+
+
     //private void Awake()
     //{
     //    Messenger.AddListener(GameEvent.PLAYER_DEAD, this.Open);
@@ -49,6 +53,7 @@ public class GameOverPopup : MonoBehaviour
     public void OnRestartGame()
     { 
         Close();
+        uiController.SetGameActive(true);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
        
         Debug.Log("Restart Game");

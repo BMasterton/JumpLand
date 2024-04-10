@@ -21,7 +21,15 @@ public static class GameEvent
     public const string RESTART_GAME = "RESTART_GAME";
 
     public const string BASE_SHOOT = "BASE_SHOOT";
-
+    
     public const string POWER_UP = "POWER_UP";
+
+    public const string KEY_PICKUP = "KEY_PICKUP";
+
+    public const string DOOR_OPEN = "DOOR_OPEN";
+    
+    public const string TELEPORT = "TELEPORT";
+
+    public const string GAME_WIN = "GAME_WIN";
 
 }

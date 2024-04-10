@@ -22,6 +22,14 @@ TagManager:
   - Ghost
   - Projectile
   - Slime
+  - Spike
+  - SpikeKey
+  - MazeKey
+  - EnemyKey
+  - Door
+  - Portal
+  - FakeHouse
+  - Tree
   layers:
   - Default
   - TransparentFX

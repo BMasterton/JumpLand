@@ -13,6 +13,8 @@ public class Ghost : MonoBehaviour
 
     [SerializeField] private GameObject projectilePrefab;       // for creating "bullets"
     [SerializeField] public Transform projectileSpawnPt;        // spawn point for bullets    
+    [SerializeField] private AudioClip hitMarkerSound;
+    [SerializeField] private AudioSource audioSrc;
     bool facingRight = false;
 
     Vector3 lastKnownPos;
@@ -90,6 +92,7 @@ public class Ghost : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Bullet") {
+            audioSrc.PlayOneShot(hitMarkerSound);
             SpriteRenderer sprite = collision.gameObject.GetComponent<SpriteRenderer>();
             Animator anim = gameObject.GetComponent<Animator>();
             if (sprite.color == Color.red)

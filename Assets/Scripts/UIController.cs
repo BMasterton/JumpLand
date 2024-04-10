@@ -12,6 +12,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Image healthBar;
     [SerializeField] private OptionsPopup optionsPopup;
     [SerializeField] private GameOverPopup gameOverPopup;
+    [SerializeField] private GameCompletedPopup gameCompletedPopup;
     void Start()
     {
         UpdateHealth(1.0f);
@@ -32,6 +33,7 @@ public class UIController : MonoBehaviour
     }
     public void OpenGameOverPopup()
     {
+        SetGameActive(false);
         gameOverPopup.Open();
     }
 
@@ -72,6 +74,12 @@ public class UIController : MonoBehaviour
             SetGameActive(false);
     }
 
+
+    public void OpenGameWinPopup(int score)
+    {
+        SetGameActive(false);
+        gameCompletedPopup.Open(score);
+    }
     public void SetGameActive(bool active)
     {
         if (active)
