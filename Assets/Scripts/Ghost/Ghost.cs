@@ -21,12 +21,20 @@ public class Ghost : MonoBehaviour
     Rigidbody2D rb;
 
     int ghostHealth = 5;
+    int ghostMaxHealth = 5;
     int ghostPointWorth = 500;
+    [SerializeField] FloatingHealthBar healthBar;
 
     void Start()
     {
         Player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody2D>();
+        healthBar.UpdateHealthBar(ghostHealth, ghostMaxHealth);
+    }
+
+    private void Awake()
+    {
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
     }
     void Flip()
     {
@@ -98,6 +106,7 @@ public class Ghost : MonoBehaviour
             if (sprite.color == Color.red)
             {
                 ghostHealth -= 2;
+                healthBar.UpdateHealthBar(ghostHealth, ghostMaxHealth);
                 anim.SetTrigger("ouch");
                 if (ghostHealth <= 0)
                 {
@@ -109,6 +118,7 @@ public class Ghost : MonoBehaviour
             else if (sprite.color == Color.yellow)
             {
                 ghostHealth--;
+                healthBar.UpdateHealthBar(ghostHealth, ghostMaxHealth);
                 anim.SetTrigger("ouch");
                 if (ghostHealth <= 0)
                 {

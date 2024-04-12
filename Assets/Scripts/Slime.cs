@@ -9,9 +9,11 @@ public class Slime : MonoBehaviour
     [SerializeField] public Transform projectileSpawnPt;        // spawn point for bullets
     [SerializeField] private AudioClip hitMarkerSound;
     [SerializeField] private AudioSource audioSrc;
+    [SerializeField] FloatingHealthBar healthBar;
     bool facingRight = false;
 
     int slimeHealth = 4;
+    int slimeMaxHealth = 4;
     int slimePointWorth = 350;
 
     float attackTimer;
@@ -28,6 +30,12 @@ public class Slime : MonoBehaviour
     void Start()
     {
         attackTimer = 0;
+        healthBar.UpdateHealthBar(slimeHealth, slimeMaxHealth);
+    }
+
+    private void Awake()
+    {
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
     }
 
     // Update is called once per frame
@@ -77,6 +85,8 @@ public class Slime : MonoBehaviour
             if (sprite.color == Color.red)
             {
                 slimeHealth -= 2;
+                healthBar.UpdateHealthBar(slimeHealth, slimeMaxHealth);
+
                 anim.SetTrigger("ouch");
                 if (slimeHealth <= 0)
                 {
@@ -88,6 +98,8 @@ public class Slime : MonoBehaviour
             else if (sprite.color == Color.yellow)
             {
                 slimeHealth--;
+                healthBar.UpdateHealthBar(slimeHealth, slimeMaxHealth);
+
                 anim.SetTrigger("ouch");
                 if (slimeHealth <= 0)
                 {

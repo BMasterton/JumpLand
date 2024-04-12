@@ -9,17 +9,20 @@ public class TreeEnemy : MonoBehaviour
     [SerializeField] private AudioClip hitMarkerSound;
     [SerializeField] private AudioSource audioSrc;
     [SerializeField] private Animator anim;
+    [SerializeField] FloatingHealthBar healthBar;
     // Start is called before the first frame update
 
     public bool facingRight;
 
     int treeHealth = 6;
+    int treeMaxHealth = 6;
     int treePointWorth = 350;
 
     float attackTimer;
     float attackTimeThreshold = 1.0f;
     void Start()
     {
+        healthBar.UpdateHealthBar(treeHealth, treeMaxHealth);
         if (facingRight)
         {
             transform.Rotate(Vector3.up, 180);
@@ -32,7 +35,10 @@ public class TreeEnemy : MonoBehaviour
       
     }
 
-    
+    private void Awake()
+    {
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -83,6 +89,7 @@ public class TreeEnemy : MonoBehaviour
             if (sprite.color == Color.red)
             {
                 treeHealth -= 2;
+                healthBar.UpdateHealthBar(treeHealth, treeMaxHealth);
                 anim.SetTrigger("ouch");
                 if (treeHealth <= 0)
                 {
@@ -94,6 +101,7 @@ public class TreeEnemy : MonoBehaviour
             else if (sprite.color == Color.yellow)
             {
                 treeHealth--;
+                healthBar.UpdateHealthBar(treeHealth, treeMaxHealth);
                 anim.SetTrigger("ouch");
                 if (treeHealth <= 0)
                 {

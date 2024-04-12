@@ -8,16 +8,24 @@ public class EnemyController : MonoBehaviour
     [SerializeField] Animator anim;
     [SerializeField] private AudioClip hitMarkerSound;
     [SerializeField] private AudioSource audioSrc;
+    [SerializeField] FloatingHealthBar healthBar;
     private bool pigFacingRight = true;    // true if facing right
     int birdHealth = 3;
+    int birdMaxHealth = 3;
     int pigHealth = 5;
+   int pigMaxHealth = 5;
     int birdPointWorth = 100;
     int pigPointWorth = 250;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        healthBar.UpdateHealthBar(pigHealth, pigMaxHealth);
+        healthBar.UpdateHealthBar(birdHealth, birdMaxHealth);
+    }
+    private void Awake()
+    {
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
     }
 
     // Update is called once per frame
@@ -50,11 +58,14 @@ public class EnemyController : MonoBehaviour
             {
                 if(this.gameObject.tag == "FatBird")
                 {
+                   
                     birdHealth -= 2;
+                    healthBar.UpdateHealthBar(birdHealth, birdMaxHealth);
                 }
                 else if (this.gameObject.tag == "AngryPig")
                 {
                     pigHealth -= 2;
+                    healthBar.UpdateHealthBar(pigHealth, pigMaxHealth);
                 }
                 anim.SetTrigger("ouch");   
                 if (birdHealth <= 0 || pigHealth <=0)
@@ -79,10 +90,12 @@ public class EnemyController : MonoBehaviour
                 if (this.gameObject.tag == "FatBird")
                 {
                     birdHealth--;
+                    healthBar.UpdateHealthBar(birdHealth, birdMaxHealth);
                 }
                 else if (this.gameObject.tag == "AngryPig")
                 {
                     pigHealth--;
+                    healthBar.UpdateHealthBar(pigHealth, pigMaxHealth);
                 }
                 anim.SetTrigger("ouch");  
             if ( birdHealth <= 0 || pigHealth <= 0)
