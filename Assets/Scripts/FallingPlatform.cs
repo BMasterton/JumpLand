@@ -37,7 +37,7 @@ public class FallingPlatform : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "Bounds" && respawns)
+        if(collision.gameObject.tag == "bound2" && respawns)
         {
             StartCoroutine(waitBeforeRespawn(fallWaitTime));
             //rb.isKinematic = true;

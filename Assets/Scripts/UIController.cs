@@ -9,7 +9,9 @@ public class UIController : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] private TextMeshProUGUI scoreValue;
+    [SerializeField] private TextMeshProUGUI keyValue;
     [SerializeField] private Image healthBar;
+    [SerializeField] private Image livesBar;
     [SerializeField] private OptionsPopup optionsPopup;
     [SerializeField] private GameOverPopup gameOverPopup;
     [SerializeField] private GameCompletedPopup gameCompletedPopup;
@@ -23,12 +25,14 @@ public class UIController : MonoBehaviour
     private void Awake()
     {
         Messenger<float>.AddListener(GameEvent.HEALTH_CHANGED, OnHealthChanged);
-       
+        Messenger<float>.AddListener(GameEvent.LIVES_CHANGED, OnLivesChanged);
+
     }
 
     private void OnDestroy()
     {
         Messenger<float>.RemoveListener(GameEvent.HEALTH_CHANGED, OnHealthChanged);
+        Messenger<float>.RemoveListener(GameEvent.LIVES_CHANGED, OnLivesChanged);
 
     }
     public void OpenGameOverPopup()
@@ -40,10 +44,18 @@ public class UIController : MonoBehaviour
 
     public void OnHealthChanged(float healthPercentage)
     {
-        //Debug.Log("OnHealthChanged");
-        //Debug.Log(healthPercentage);
         UpdateHealth(healthPercentage);
         healthBar.color = Color.Lerp(Color.red, Color.green, healthPercentage);
+    }
+
+    public void OnLivesChanged(float livePercentage)
+    {
+        UpdateLives(livePercentage);
+    }
+
+    public void UpdateLives(float life)
+    {
+        livesBar.fillAmount = life;
     }
     public void UpdateHealth(float health)
     {
@@ -53,7 +65,11 @@ public class UIController : MonoBehaviour
 
     public void UpdateScore(int newScore)
     {
-        scoreValue.text = newScore.ToString();
+        scoreValue.text = newScore.ToString() ;
+    }
+    public void UpdateKey(int newKey)
+    {
+        keyValue.text = newKey.ToString() + " / 3";
     }
     void Update()
     {

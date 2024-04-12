@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HealthPickup : MonoBehaviour
 {
-    private int healthValue = 1;
+    private int healthValue = 2;
     [SerializeField] Animator anim;
     // Start is called before the first frame update
     void Start()

@@ -19,7 +19,7 @@ public class TreeEnemy : MonoBehaviour
     int treePointWorth = 350;
 
     float attackTimer;
-    float attackTimeThreshold = 1.0f;
+    float attackTimeThreshold = 2.0f;
     void Start()
     {
         healthBar.UpdateHealthBar(treeHealth, treeMaxHealth);

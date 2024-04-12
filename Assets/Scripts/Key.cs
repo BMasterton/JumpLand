@@ -26,6 +26,7 @@ public class Key : MonoBehaviour
         {
 
             Messenger<string>.Broadcast(GameEvent.KEY_PICKUP, this.gameObject.tag);
+            Messenger.Broadcast(GameEvent.KEY_COLLECTED);
             anim.SetTrigger("collected");
             StartCoroutine(waitBeforeDestroy(this.gameObject));
         }

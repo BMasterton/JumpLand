@@ -6,6 +6,10 @@ public static class GameEvent
 
     public const string HEALTH_CHANGED = "HEALTH_CHANGED";
 
+    public const string KEY_COLLECTED = "KEY_COLLECTED";
+
+    public const string LIVES_CHANGED = "LIVES_CHANGED";
+
     public const string POPUP_OPENED = "POPUP_OPENED";
 
     public const string POPUP_CLOSED = "POPUP_CLOSED";

@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] PlayerController player;
     [SerializeField] private UIController ui;
     private int score = 0;
+    private int keyTotal = 0;
 
    
   
@@ -22,20 +23,20 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Messenger<int>.AddListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
-       
         Messenger.AddListener(GameEvent.RESTART_GAME, OnRestartGame);
         Messenger.AddListener(GameEvent.PLAYER_DEAD, GameOverPopUp);
         Messenger.AddListener(GameEvent.GAME_WIN, GameWinPopup);
+        Messenger.AddListener(GameEvent.KEY_COLLECTED, OnKeyCollected);
 
 
     }
     private void OnDestroy()
     {
         Messenger<int>.RemoveListener(GameEvent.ENEMY_DEAD, OnEnemyDead);
-       
         Messenger.RemoveListener(GameEvent.RESTART_GAME, OnRestartGame);
         Messenger.RemoveListener(GameEvent.PLAYER_DEAD, GameOverPopUp);
         Messenger.RemoveListener(GameEvent.GAME_WIN, GameWinPopup);
+        Messenger.RemoveListener(GameEvent.KEY_COLLECTED, OnKeyCollected);
 
     }
 
@@ -43,6 +44,12 @@ public class GameManager : MonoBehaviour
     {
         score += pointWorth;
         ui.UpdateScore(score);
+    }
+
+    private void OnKeyCollected()
+    {
+        keyTotal++;
+        ui.UpdateKey(keyTotal);
     }
 
     // Update is called once per frame

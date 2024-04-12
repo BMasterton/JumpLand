@@ -47,7 +47,8 @@ public class CollectableItems : MonoBehaviour
         if (collision.gameObject.tag == "Player" && this.gameObject.tag == "Apple"
              || collision.gameObject.tag == "Player" && this.gameObject.tag == "Pineapple"
             || collision.gameObject.tag == "Player" && this.gameObject.tag == "Melon"
-            || collision.gameObject.tag == "Player" && this.gameObject.tag == "Cherry")
+            || collision.gameObject.tag == "Player" && this.gameObject.tag == "Cherry"
+            || collision.gameObject.tag == "Player" && this.gameObject.tag == "ExtraLife")
         {
 
             Messenger<string>.Broadcast(GameEvent.POWER_UP, this.gameObject.tag);

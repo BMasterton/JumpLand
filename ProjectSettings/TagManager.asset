@@ -30,6 +30,8 @@ TagManager:
   - Portal
   - FakeHouse
   - Tree
+  - bound2
+  - ExtraLife
   layers:
   - Default
   - TransparentFX

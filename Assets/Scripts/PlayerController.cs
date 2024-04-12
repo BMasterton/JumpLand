@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip fallOffMapSound;
     [SerializeField] private AudioClip gameOverSound;
     [SerializeField] private AudioClip spikeTrapSound;
+    [SerializeField] private AudioClip gameWinSound;
+    [SerializeField] private AudioClip gameWinMusic;
     [SerializeField] private AudioSource audioSrc;
     private float horizInput;           // store horizontal input for used in FixedUpdate()
     private float moveSpeed = 450.0f;   // 4.5 * 100 newtons
@@ -48,9 +50,18 @@ public class PlayerController : MonoBehaviour
     //health variables
     private int maxHealth = 5;
     private int currentHealth;
+    private int maxLives = 3;
+    private int playerLives = 3;
+
+    //keys
     private bool hasSpikeKey = false;
     private bool hasEnemyKey = false;
     private bool hasMazeKey = false;
+
+    //invincible
+    private bool isInvulnerable = false;
+    float invTimer;
+    private float invTimerThreshold = 1.0f;
 
 
     private void Start()
@@ -90,6 +101,10 @@ public class PlayerController : MonoBehaviour
     private void teleportPlayer()
     {
         transform.position = fakeHouseSpawn.position;
+        AudioSource source = gameObject.GetComponent<AudioSource>();
+        source.clip = gameWinMusic;
+        source.PlayOneShot(gameWinSound);
+        source.Play();
     }
 
     private void OnDestroy()
@@ -135,15 +150,23 @@ public class PlayerController : MonoBehaviour
         }
         else if (powerup == "Cherry")
         {
-            rbody.gravityScale /= 2;
-              yield return new WaitForSeconds(15);
-            rbody.gravityScale *= 2;
+            rbody.gravityScale /= 1.5f;
+              yield return new WaitForSeconds(10);
+            rbody.gravityScale *= 1.5f;
         }
         else if (powerup == "Pineapple")
         {
-            moveSpeed *= 2;
-             yield return new WaitForSeconds(15);
-            moveSpeed /= 2; 
+            moveSpeed *= 1.5f;
+             yield return new WaitForSeconds(10);
+            moveSpeed /= 1.5f; 
+        }
+        else if (powerup == "ExtraLife")
+        {
+           if(playerLives != maxLives)
+            {
+                playerLives++;
+                Messenger<float>.Broadcast(GameEvent.LIVES_CHANGED, ((float)playerLives / (float)maxLives));
+            }
         }
 
 
@@ -266,17 +289,42 @@ public class PlayerController : MonoBehaviour
         destoryBall(go);
     }
 
+    IEnumerator OnInvulnerable()
+{
+    isInvulnerable  = true;
+   
+
+    yield return new WaitForSeconds(1f); //how long player invulnerable
+
+   
+    isInvulnerable  = false;
+}
+
     public void Hit()
     {
+      
+        if(!isInvulnerable)
+        { 
         currentHealth -= 1;
-        audioSrc.PlayOneShot(damageTakenSound);
+            anim.SetTrigger("ouch");
+            audioSrc.PlayOneShot(damageTakenSound);
         Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, ((float)currentHealth / (float)maxHealth));
         //Debug.Log("Health: " + currentHealth);
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && playerLives == 1)
         {
             audioSrc.PlayOneShot(gameOverSound);
             Messenger.Broadcast(GameEvent.PLAYER_DEAD);
+        } else if (currentHealth <= 0 && playerLives !=0)
+        {
+            playerLives--;
+            currentHealth = maxHealth;
+            transform.position = respawnPt.position;
+            Messenger<float>.Broadcast(GameEvent.HEALTH_CHANGED, ((float)currentHealth / (float)maxHealth));
+            Messenger<float>.Broadcast(GameEvent.LIVES_CHANGED, ((float)playerLives / (float)maxLives));
         }
+        StartCoroutine(OnInvulnerable());
+        }
+        
     }
 
     IEnumerator makeInvulnerable(GameObject player)
@@ -297,11 +345,12 @@ public class PlayerController : MonoBehaviour
 
         if (collision.gameObject.tag == "Bounds" && currentHealth != 0)
         {
+            
             Hit();
             audioSrc.PlayOneShot(fallOffMapSound);
             transform.position = respawnPt.position;
         }
-        else if (collision.gameObject.tag == "Bounds" && currentHealth == 0)
+        else if (collision.gameObject.tag == "Bounds" && currentHealth == 0 && playerLives == 0)
         {
             // end game screen with restart and try again.
             Messenger.Broadcast(GameEvent.PLAYER_DEAD);
@@ -322,9 +371,9 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Platform" || collision.gameObject.tag == "OneWayPlatform")
         {
-            isGrounded = true;
-            anim.SetBool("isGrounded", true); // not triggering grounded for some reason even though the anim in being set 
-            jumpsAvailable = jumpMax;
+            //isGrounded = true;
+            //anim.SetBool("isGrounded", true); // not triggering grounded for some reason even though the anim in being set 
+            //jumpsAvailable = jumpMax;
 
         }
         else if (collision.gameObject.tag == "FatBird" || 
@@ -336,8 +385,8 @@ public class PlayerController : MonoBehaviour
             && currentHealth != 0)
         {
             Hit();
-            //StartCoroutine(makeInvulnerable(this.gameObject));
-            anim.SetTrigger("ouch");
+            
+           
 
         }
         else if (collision.gameObject.tag == "Spike")

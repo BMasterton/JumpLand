@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1902454006826503816}
   - component: {fileID: 5642031261881626523}
   - component: {fileID: 1490303493843537650}
+  - component: {fileID: 5063726984981557521}
   m_Layer: 6
   m_Name: MovingPlatform
   m_TagString: Platform
@@ -100,10 +101,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   setPaths:
-  - {x: 0, y: 0}
-  - {x: -5, y: 0}
+  - {x: 196.4, y: -284.34}
+  - {x: 191.23, y: -284.34}
   currentPathIndex: 0
-  speed: 1
+  speed: 2
 --- !u!61 &5642031261881626523
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -176,3 +177,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!95 &5063726984981557521
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6396891772723817021}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: aa1c48becf2320e479715b8d6b7c99ca, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
