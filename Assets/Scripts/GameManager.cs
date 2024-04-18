@@ -75,12 +75,6 @@ public class GameManager : MonoBehaviour
     }
 
   
-
-    public void EndGame()
-    {
-        //end game stuff here 
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
 
@@ -97,8 +91,7 @@ public class GameManager : MonoBehaviour
         Transform position = platform.transform;
         yield return new WaitForSeconds(2);
         platform.SetActive(true);
-        //_ = Instantiate(platform) as GameObject;
-        //platform.transform.position = position.position;
+
 
         Debug.Log("Exited Deactivate");
     }
@@ -110,7 +103,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Entered deactivate");
         yield return new WaitForSeconds(2);//wait x amount of seconds
         platform.SetActive(false);
-        //Destroy(platform);
 
         StartCoroutine(activate());
     }
