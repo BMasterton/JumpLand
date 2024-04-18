@@ -60,8 +60,6 @@ public class PlayerController : MonoBehaviour
 
     //invincible
     private bool isInvulnerable = false;
-    float invTimer;
-    private float invTimerThreshold = 1.0f;
 
 
     private void Start()
@@ -80,7 +78,7 @@ public class PlayerController : MonoBehaviour
         initialJumpVelocity = Mathf.Sqrt(jumpHeight * -2 * gravity);
     }
 
-
+    //if the player dies or something odd happens just making sure the bullet returns to normal 
     private void setBulletBackToNormal()
     {
         SpriteRenderer sprite = bullet.GetComponent<SpriteRenderer>();
@@ -98,14 +96,6 @@ public class PlayerController : MonoBehaviour
       
     }
 
-    private void teleportPlayer()
-    {
-        transform.position = fakeHouseSpawn.position;
-        AudioSource source = gameObject.GetComponent<AudioSource>();
-        source.clip = gameWinMusic;
-        source.PlayOneShot(gameWinSound);
-        source.Play();
-    }
 
     private void OnDestroy()
     {
@@ -117,6 +107,17 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    //used for teleporting the player to the end of the game 
+    private void teleportPlayer()
+    {
+        transform.position = fakeHouseSpawn.position;
+        AudioSource source = gameObject.GetComponent<AudioSource>();
+        source.clip = gameWinMusic;
+        source.PlayOneShot(gameWinSound);
+        source.Play();
+    }
+
+    //check for seeing if they player has found all they keys 
     public void foundKey(string keyName)
     {
         if(keyName == "SpikeKey")
@@ -133,14 +134,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //coroutine for giving the player a powerup
     IEnumerator powerUpTimer(string powerup)
     {
+        //give player stronger bullets
         if (powerup == "Apple") { 
             SpriteRenderer sprite = bullet.GetComponent<SpriteRenderer>();
             sprite.color = Color.red;
             yield return new WaitForSeconds(15);
             sprite.color = Color.yellow; 
         }
+        // give player bigger bullets
         else if (powerup == "Melon")
         {
             Transform sprite = bullet.GetComponent<Transform>();
@@ -148,18 +152,21 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(15);
             sprite.localScale = new Vector3(0.25f, 0.25f, 0.25f);
         }
+        // make the player moon jump
         else if (powerup == "Cherry")
         {
             rbody.gravityScale /= 1.5f;
               yield return new WaitForSeconds(10);
             rbody.gravityScale *= 1.5f;
         }
+        //make the player fast 
         else if (powerup == "Pineapple")
         {
             moveSpeed *= 1.5f;
              yield return new WaitForSeconds(10);
             moveSpeed /= 1.5f; 
         }
+        // add an extra life to the player 
         else if (powerup == "ExtraLife")
         {
            if(playerLives != maxLives)
@@ -197,7 +204,7 @@ public class PlayerController : MonoBehaviour
             jumpsAvailable = jumpMax;
         }
 
-
+        //checking for firing the bullets
         if (Input.GetButtonDown("Fire1") )
         {
             Fire();
@@ -217,6 +224,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //player picks up health 
     public void OnPickupHealth(int healthAdded)
     {
         //Debug.Log("Entered the onPickpHealth");
@@ -272,6 +280,7 @@ public class PlayerController : MonoBehaviour
         Destroy(go);
     }
 
+    //for firing the players bullets
     void Fire()
     {
             GameObject go = Instantiate(bullet, bulletSpawnPt.position, bullet.transform.rotation);
@@ -300,6 +309,7 @@ public class PlayerController : MonoBehaviour
     isInvulnerable  = false;
 }
 
+    //player has been hit by something
     public void Hit()
     {
       
@@ -327,13 +337,7 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    IEnumerator makeInvulnerable(GameObject player)
-    {
-        Debug.Log("Got into the makeInvulnerable");
-        Physics2D.IgnoreLayerCollision(8, 7, true);
-        yield return new WaitForSeconds(1f);
-        Physics2D.IgnoreLayerCollision(8,7, false);
-    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -369,14 +373,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Platform" || collision.gameObject.tag == "OneWayPlatform")
-        {
-            //isGrounded = true;
-            //anim.SetBool("isGrounded", true); // not triggering grounded for some reason even though the anim in being set 
-            //jumpsAvailable = jumpMax;
-
-        }
-        else if (collision.gameObject.tag == "FatBird" || 
+        if (collision.gameObject.tag == "FatBird" || 
             collision.gameObject.tag == "AngryPig" ||
             collision.gameObject.tag == "Ghost" ||
              collision.gameObject.tag == "Slime" ||
@@ -385,13 +382,9 @@ public class PlayerController : MonoBehaviour
             && currentHealth != 0)
         {
             Hit();
-            
-           
-
         }
         else if (collision.gameObject.tag == "Spike")
         {
-
             Hit();
             audioSrc.PlayOneShot(spikeTrapSound);
             transform.position = respawnPt.position;
